@@ -29,7 +29,9 @@ var name = '';//user name when logged in
 // Spotify Credential
 var client_id = '8f45885ac9314883a34ba50f736762e8'
 var clientSecret = '11023c34f43e4fce8b1544e136476910'
-var redirect_uri = 'http://localhost:8000'
+
+var redirect_uri = 'http://homequ.herokuapp.com'
+//var redirect_uri = 'http://localhost:8000' 
 var auth_code = null
 
 var spot = new spotify({
@@ -107,7 +109,7 @@ var requestFunc = require('./Func/request')
 router.route('/request')
     .get(function(req, res){ //Get The List of Requests
 
-        res.sendFile('C:/Users/RyanJ/Desktop/HomeQ/index.html');   
+        res.sendFile('index.html', {root: __dirname} );   
     })
     .put(function(req, res){ //put a new song
         requestFunc.Put(req, res)
