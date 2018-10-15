@@ -38,7 +38,7 @@ var recur = {
             // Output items
              console.log("Now Playing: ",data.body.item.name );
              //console.log(data.body.context.uri);
-            // console.log("TIME LEFT: ", (data.body.item.duration_ms - data.body.progress_ms) / 1000);
+             console.log("TIME LEFT: ", (data.body.item.duration_ms - data.body.progress_ms) / 1000);
             // console.log("TIME PROGRESSED: ",data.body.progress_ms / 1000);
 
             //If current playback ended, move to next song.
