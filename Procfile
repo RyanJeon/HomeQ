@@ -1,1 +1,1 @@
-web: node server.jsx`
+web: node server.js
