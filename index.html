@@ -4,24 +4,75 @@
   $(function () {
     var socket = io();
 
-    $('form').submit(function(){
+    var items;
+
+    $('form').submit(function(){ //When submit request
       var title = $('#m').val(); //name of the requester
-      var data = { title : title }
+      var data = { 
+          title : title
+      }
+      console.log('SUBMIT')
       
       socket.emit('Request', data );
       $('#m').val('');
       return  false;
     });
 
-    socket.on('connection', function(requests){
-        $('#messages').empty();
-        for( req in requests) $('#messages').append($('<li>').text(requests[req].title));
-    });
+    $('form').on('input', function(){ //search 
+        var title = $('#m').val();
+        socket.emit('Search', title);
+    })
 
-    socket.on('Request', function(requests){
+    $("#results").on('click',  'li', function(){
+        var index = $(this).closest("li").index();
+        var item = items[index];
+        console.log(item)
+        var data = {
+          title : item.name,
+          context_uri : item.uri
+        }
+
+        console.log(item);
+
+        socket.emit('Request', data )
+
+        //RESET SEARCH LIST
+        $('#results').empty();
+        item = [];
+    })
+
+    socket.on('connection', function(requests){
         $('#messages').empty();
         for( req in requests) $('#messages').append($('<li>').text(requests[req].title + " Requested By "  + requests[req].requester));
     });
+
+
+    socket.on('Refresh', function(requests){
+      $('#messages').empty();
+      for( req in requests) $('#messages').append($('<li>').text(requests[req].title + " Requested By "  + requests[req].requester));
+    });
+
+    socket.on('Request', function(requests){
+      console.log(requests)
+        $('#messages').empty();
+        for( req in requests) $('#messages').append($('<li>').text(requests[req].title + " Requested By "  + requests[req].requester));
+    });
+
+    socket.on('Search', function(requests){
+
+        if(requests == null || $('#m').val().length < 1 ){
+          $('#results').empty();
+        }
+        else{
+          console.log(requests.tracks.items)
+          items = requests.tracks.items
+
+          $('#results').empty();
+          for( req in items) $('#results').append($('<li>').text(items[req].name ) );
+        }
+
+    });
+
   });
 </script>
 
@@ -32,6 +83,9 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
+
+      result { background: rgba(13, 14, 14, 0.1); height: 100%; padding: 3px; position: fixed; bottom: 30; width: 100%; }
+
       form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
@@ -40,11 +94,20 @@
       #messages li { height: 20%; text-align: center; color:black;
                      font-size: 200%; vertical-align: baseline; line-height: 600% }
       #messages li:nth-child(odd) { background: #eee; }
+      #results { list-style-type: none; margin: 0; padding: 0; }
+      #results li { height: 20%; text-align: center; color:black;
+                     font-size: 200%; vertical-align: baseline; line-height: 600% 
+                    ; background: white;  
+                  }
+
 
     </style>
   </head>
   <body>
     <ul id="messages"></ul>
+    <result>
+        <ul id="results"></ul>
+    </result>
     <form action="">
       <input id="m" autocomplete="off" /><button>Request</button>
     </form>

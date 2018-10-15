@@ -6,7 +6,7 @@ var ObjectId = Schema.ObjectId
 var Request = new Schema(
     {
         requester: String, //Who requested the song?
-        
+        context_uri: String, //need to query for track
         title: String, //Song title
         
 

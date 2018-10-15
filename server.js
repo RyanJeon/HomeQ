@@ -5,7 +5,9 @@ var bodyParser = require("body-parser")
 var spotify = require('spotify-web-api-node');
 var mongo = require("mongoose");
 var io = require('socket.io')(server)
-
+var cron = require('node-cron');
+var recur = require('./Func/recur')
+var request = require('request');
 
 var router = exp.Router();
 
@@ -43,7 +45,6 @@ var tokenExpirationEpoch;
 
 app.get('/', function(req, res){
     if(req.query.code !== null) auth_code = req.query.code //update auth code
-
     if(auth_code == undefined) res.redirect('login')
     else if(auth_code !== null){
         // First retrieve an access token
@@ -62,16 +63,12 @@ app.get('/', function(req, res){
                 Math.floor(tokenExpirationEpoch - new Date().getTime() / 1000) +
                 ' seconds!'
             );
-
-            spot.getMyCurrentPlaybackState({
-            })
-            .then(function(data) {
-              // Output items
-              console.log("Now Playing: ",data.body);
-            }, function(err) {
-              console.log('Something went wrong!', err);
+            
+            
+            //UPDATE CURRENT PLAYBACK EVERY SECOND
+            cron.schedule('* * * * * *', () => {
+                recur.update(spot, data)
             });
-
 
             },
             function(err) {
@@ -84,7 +81,7 @@ app.get('/', function(req, res){
         );
 
         console.log("API LAUNCHED")
-        res.sendFile('C:/Users/RyanJ/Desktop/HomeQ/index.html');   
+        res.send("AUTHENTICATE")
     }
 
 })
@@ -95,7 +92,7 @@ app.get('/api', function(req, res){
 })
 
 app.get('/login', function(req, res) { //authorize
-    var scopes = 'user-read-private user-read-currently-playing user-read-playback-state user-read-email';
+    var scopes = 'user-read-private user-read-currently-playing user-read-playback-state user-read-email user-modify-playback-state';
     res.redirect('https://accounts.spotify.com/authorize' +
       '?response_type=code' +
       '&client_id=' + client_id +
@@ -103,8 +100,23 @@ app.get('/login', function(req, res) { //authorize
       '&redirect_uri=' + encodeURIComponent(redirect_uri));
 });
 
+
 //Functions
 var requestFunc = require('./Func/request')
+///// Song Request Endpoints
+router.route('/request')
+    .get(function(req, res){ //Get The List of Requests
+
+        res.sendFile('C:/Users/RyanJ/Desktop/HomeQ/index.html');   
+    })
+    .put(function(req, res){ //put a new song
+        requestFunc.Put(req, res)
+    })
+
+router.route('/search')
+    .get(function(req, res){
+        recur.search(spot, req.query.title, req, res); //return search data
+    })
 
 //WEB SOCKET
 var Requests = require('./Models/Request')
@@ -117,7 +129,18 @@ io.on('connection', function (socket){
         io.emit('Request', docs)
     })
 
-    socket.emit('enter', { test: "test"});
+    //UPDATE QUEUE DISPLAY
+    cron.schedule('* * * * * *', () => {
+        Requests.find({})
+        .then(function(docs){
+            io.emit('Refresh', docs)
+        })
+    });
+
+    socket.on('Refresh', function(data){ //request websocket
+        io.emit('Refresh', data)
+    })
+
 
     socket.on('Request', function(data){ //request websocket
         
@@ -127,6 +150,7 @@ io.on('connection', function (socket){
 
         Request.requester = 'Ryan Jeon';
         Request.title = data.title;
+        Request.context_uri = data.context_uri;
         
         Request.save(function(err){  //add document to the collection 
             Requests.find({})
@@ -136,17 +160,23 @@ io.on('connection', function (socket){
             })
         })
     })
+
+    socket.on('Search', function(data){ //for the music search :^) !!
+
+        //Request search results 
+        request.get(
+            redirect_uri + '/api/search?title=' + data,
+            function(err, res, body){
+                if(body){
+                    io.emit('Search', JSON.parse( body ).body )
+                }
+            }
+        )
+    })
 })
 
 
-///// Song Request Endpoints
-router.route('/request')
-    .get(function(req, res){ //Get The List of Requests
-        requestFunc.Get(req, res)
-    })
-    .put(function(req, res){ //put a new song
-        requestFunc.Put(req, res)
-    })
+
 
 
 
