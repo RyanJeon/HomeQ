@@ -45,7 +45,7 @@ function checkValid(spot){
             spot.getMyCurrentPlaybackState({
             })
             .then(function(data){
-                c//onsole.log(data.body.item.uri)
+                //onsole.log(data.body.item.uri)
                 if(data.body.item.uri == uri){
                     Requests.findByIdAndRemove(top._id, function(err){
                     } )
