@@ -22,7 +22,8 @@ function playNext(spot){
                 spot.getMyCurrentPlaybackState({
                 })
                 .then(function(data){
-                    if(data.body.context_uri == uri){
+                    console.log(data.body.item)
+                    if(data.body.item.context_uri == uri){
                         Requests.findByIdAndRemove(top._id, function(err){
                         } )
                     }
@@ -42,9 +43,9 @@ var recur = {
         })
         .then(function(data) {
             // Output items
-             console.log("Now Playing: ",data.body.item.name );
+            // console.log("Now Playing: ",data.body.item.name );
              //console.log(data.body.context.uri);
-             console.log("TIME LEFT: ", (data.body.item.duration_ms - data.body.progress_ms) / 1000);
+            // console.log("TIME LEFT: ", (data.body.item.duration_ms - data.body.progress_ms) / 1000);
             // console.log("TIME PROGRESSED: ",data.body.progress_ms / 1000);
 
             //If current playback ended, move to next song.
