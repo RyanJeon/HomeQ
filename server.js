@@ -8,6 +8,7 @@ var io = require('socket.io')(server)
 var cron = require('node-cron');
 var recur = require('./Func/recur')
 var request = require('request');
+var path = require('path');
 
 var router = exp.Router();
 
@@ -30,8 +31,8 @@ var name = '';//user name when logged in
 var client_id = '8f45885ac9314883a34ba50f736762e8'
 var clientSecret = '11023c34f43e4fce8b1544e136476910'
 
-var redirect_uri = 'http://homequ.herokuapp.com'
-//var redirect_uri = 'http://localhost:8000' 
+var redirect_uri = 'http://homequ.herokuapp.com' //Production
+//var redirect_uri = 'http://localhost:8000' //Dev
 var auth_code = null
 
 var spot = new spotify({
@@ -109,7 +110,7 @@ var requestFunc = require('./Func/request')
 router.route('/request')
     .get(function(req, res){ //Get The List of Requests
 
-        res.sendFile('index.html', {root: __dirname} );   
+        res.sendFile(path.join(__dirname, './public/index.html'));   
     })
     .put(function(req, res){ //put a new song
         requestFunc.Put(req, res)
