@@ -22,8 +22,8 @@ function playNext(spot){
                 spot.getMyCurrentPlaybackState({
                 })
                 .then(function(data){
-                    console.log(data.body.item)
-                    if(data.body.item.context_uri == uri){
+                    console.log(data.body.item.uri)
+                    if(data.body.item.uri == uri){
                         Requests.findByIdAndRemove(top._id, function(err){
                         } )
                     }
