@@ -17,10 +17,12 @@ function playNext(spot){
                     },
                     "position_ms": 0 //Start 1 mili first
                   })
-                
-                  Requests.findByIdAndRemove(top._id, function(err){
+                  
+                  setTimeout(2000, function(){
+                    Requests.findByIdAndRemove(top._id, function(err){
 
-                  } )
+                    } )
+                })
             }
 
         })
@@ -44,10 +46,7 @@ var recur = {
             //If current playback ended, move to next song.
             if((data.body.item.duration_ms - data.body.progress_ms) / 1000 == 0){
                 console.log("NEXT")
-                //playNext(spot)
-                setTimeout(2000, function(){
-                    playNext(spot)
-                })
+                playNext(spot)
             }
 
         }, function(err) {
