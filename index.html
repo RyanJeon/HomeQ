@@ -11,7 +11,7 @@
       var data = { 
           title : title
       }
-      console.log('SUBMIT')
+      //console.log('SUBMIT')
       
       socket.emit('Request', data );
       $('#m').val('');
@@ -64,11 +64,11 @@
           $('#results').empty();
         }
         else{
-          console.log(requests.tracks.items)
+          //console.log(requests.tracks.items)
           items = requests.tracks.items
 
           $('#results').empty();
-          for( req in items) $('#results').append($('<li>').text(items[req].name ) );
+          for( req in items) $('#results').append($('<li>').text(items[req].name + " By " + items[req].artists[0].name ) );
         }
 
     });
