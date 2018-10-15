@@ -33,12 +33,36 @@ function playNext(spot){
         })
 }
 
+function checkValid(spot){
+    Requests.find({})
+    .then(function(docs){
+        if(docs.length != 0){ //If queue Not EMPTY
+            var top = docs[0];
+            var uri = top.context_uri;
+            //console.log(uri)
+
+            //If the top stack is a valid stack
+            spot.getMyCurrentPlaybackState({
+            })
+            .then(function(data){
+                c//onsole.log(data.body.item.uri)
+                if(data.body.item.uri == uri){
+                    Requests.findByIdAndRemove(top._id, function(err){
+                    } )
+                }
+            })
+        }
+
+    })
+}
+
 var recur = {
     
 
 
     //Recurring update function to keep track of current playback
     update : function(spot, data){
+        checkValid(spot)
         spot.getMyCurrentPlaybackState({
         })
         .then(function(data) {
