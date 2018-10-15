@@ -10,7 +10,6 @@ function playNext(spot){
                 var top = docs[0];
                 var uri = top.context_uri;
                 console.log(uri)
-                console.log(typeof(uri))
                 spot.play({
                     "uris": [uri],
                     "offset": {
@@ -20,7 +19,7 @@ function playNext(spot){
                   })
                 
                   Requests.findByIdAndRemove(top._id, function(err){
-                      
+
                   } )
             }
 
@@ -43,7 +42,7 @@ var recur = {
             // console.log("TIME PROGRESSED: ",data.body.progress_ms / 1000);
 
             //If current playback ended, move to next song.
-            if((data.body.item.duration_ms - data.body.progress_ms) / 1000 <= 1){
+            if((data.body.item.duration_ms - data.body.progress_ms) / 1000 == 0){
                 console.log("NEXT")
                 playNext(spot)
                 
