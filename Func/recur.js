@@ -17,11 +17,15 @@ function playNext(spot){
                     },
                     "position_ms": 0 //Start 1 mili first
                   })
-                  
-                  setTimeout(2000, function(){
-                    Requests.findByIdAndRemove(top._id, function(err){
 
-                    } )
+                //If the top stack is a valid stack
+                spot.getMyCurrentPlaybackState({
+                })
+                .then(function(data){
+                    if(data.body.context_uri == uri){
+                        Requests.findByIdAndRemove(top._id, function(err){
+                        } )
+                    }
                 })
             }
 
@@ -44,7 +48,7 @@ var recur = {
             // console.log("TIME PROGRESSED: ",data.body.progress_ms / 1000);
 
             //If current playback ended, move to next song.
-            if((data.body.item.duration_ms - data.body.progress_ms) / 1000 == 0){
+            if((data.body.item.duration_ms - data.body.progress_ms) / 1000 <= 1){
                 console.log("NEXT")
                 playNext(spot)
             }
