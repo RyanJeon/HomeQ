@@ -6,20 +6,13 @@
 
     var items;
 
-    $('form').submit(function(){ //When submit request
-      var title = $('#m').val(); //name of the requester
-      var data = { 
-          title : title
-      }
-      //console.log('SUBMIT')
-      
-      socket.emit('Request', data );
-      $('#m').val('');
-      return  false;
+    $('#play').on('click', function(){ //When submit request      
+      socket.emit('Play');
     });
 
     $('form').on('input', function(){ //search 
         var title = $('#m').val();
+        console.log('RESUME PLAY')
         socket.emit('Search', title);
     })
 
@@ -109,7 +102,7 @@
         <ul id="results"></ul>
     </result>
     <form action="">
-      <input id="m" autocomplete="off" /><button>Request</button>
+      <input id="m" autocomplete="off" /><button id = "play">Play</button>
     </form>
   </body>
 </html>

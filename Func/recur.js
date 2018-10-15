@@ -33,6 +33,7 @@ function playNext(spot){
         })
 }
 
+//This function will make sure there are no duplicate song in queue
 function checkValid(spot){
     Requests.find({})
     .then(function(docs){
@@ -58,8 +59,9 @@ function checkValid(spot){
 
 var recur = {
     
-
-
+    play : function(spot){
+        playNext(spot)
+    },
     //Recurring update function to keep track of current playback
     update : function(spot, data){
         checkValid(spot)

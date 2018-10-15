@@ -121,6 +121,7 @@ router.route('/search')
         recur.search(spot, req.query.title, req, res); //return search data
     })
 
+
 //WEB SOCKET
 var Requests = require('./Models/Request')
 io.on('connection', function (socket){
@@ -176,6 +177,11 @@ io.on('connection', function (socket){
             }
         )
     })
+
+    socket.on('Play', function(){
+        recur.play(spot); //admin access
+    })
+
 })
 
 
